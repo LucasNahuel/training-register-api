@@ -6,7 +6,9 @@ import ar.lucasmunoz.trainingregister.Models.User;
 import ar.lucasmunoz.trainingregister.Repositories.*;
 import io.jsonwebtoken.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.AuthorityUtils;
@@ -25,13 +27,14 @@ public class LoginController {
 
 
     @PostMapping("login")
-    public @ResponseBody Object login(@RequestParam("user") String user, @RequestParam("password") String password) {
+    public @ResponseBody ResponseEntity login(@RequestParam("user") String user, @RequestParam("password") String password) {
+
 
 
         if( userRepository.findByUserAndPassword(user, password).isEmpty() ){
-            return new ResponseMessage("invalid credentials");
+            return new ResponseEntity("{ \"value\" : \"invalid credentials\" }", HttpStatus.UNAUTHORIZED);
         }else{
-            return new ResponseMessage(getJWTToken(user));
+            return new ResponseEntity(getJWTToken(user), HttpStatus.UNAUTHORIZED);
         }
 
 
